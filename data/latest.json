@@ -1,0 +1,8 @@
+{
+  "trading_day": "2026-11-25",
+  "generated_at": "2026-11-27T03:23:08+00:00",
+  "snapshot": "snapshots/2026/2026-11-25.csv.gz",
+  "meta": "snapshots/2026/2026-11-25.meta.json",
+  "snapshot_bytes": 227036,
+  "snapshot_sha256": "a9d560950c258cab7136ec811086af940648539abd46d1131756d1f7c71451a9"
+}

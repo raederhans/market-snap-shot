@@ -1,0 +1,187 @@
+{
+  "schema_version": 2,
+  "trading_day": "2026-11-25",
+  "generated_at": "2026-11-27T03:23:08+00:00",
+  "provider": "Yahoo Finance via yfinance (unofficial; split- and dividend-adjusted, auto_adjust=True); yfinance 1.8.0",
+  "rules_version": "1.0.0",
+  "benchmark": {
+    "symbol": "SPY",
+    "rs_strength_pct": -1.0145512279916469
+  },
+  "sample_limit": null,
+  "symbol_directory": {
+    "url": "https://www.nasdaqtrader.com/dynamic/SymDir/nasdaqtraded.txt",
+    "file_creation_time": "1125202621:34"
+  },
+  "counts": {
+    "directory_rows": 13312,
+    "directory_excluded": {
+      "debt": 188,
+      "etf": 5832,
+      "fund": 265,
+      "preferred": 139,
+      "right": 122,
+      "structured_product": 6,
+      "symbol_pattern": 378,
+      "test_issue": 36,
+      "unit": 294,
+      "warrant": 421
+    },
+    "stocks_after_filter": 5631,
+    "stocks_requested": 5631,
+    "etfs_requested": 13,
+    "requested": 5644,
+    "fetched": 5644,
+    "no_data": 0,
+    "invalid_bars": 4,
+    "snapshot_rows": 5640,
+    "fetch_success_ratio": 0.9993,
+    "stale_ratio": 0.0016,
+    "rows_by_group_and_status": {
+      "stock": {
+        "below_min_dollar_volume": 855,
+        "below_min_price": 1703,
+        "history_gaps": 17,
+        "insufficient_bars": 419,
+        "ranked": 2624,
+        "stale": 9
+      },
+      "etf": {
+        "reference": 13
+      }
+    }
+  },
+  "failed_symbols": {
+    "no_data": [],
+    "invalid_bars": {
+      "AVZO": "negative volume or non-positive price",
+      "GMEX": "negative volume or non-positive price",
+      "PARA": "negative volume or non-positive price",
+      "SVA": "negative volume or non-positive price"
+    }
+  },
+  "config": {
+    "benchmark": "SPY",
+    "etf_watchlist": [
+      "SPY",
+      "QQQ",
+      "IWM",
+      "DIA",
+      "RSP",
+      "MDY",
+      "SOXX",
+      "SMH",
+      "XLK",
+      "XLF",
+      "XLE",
+      "XLV",
+      "XLI"
+    ],
+    "universe": {
+      "directory_url": "https://www.nasdaqtrader.com/dynamic/SymDir/nasdaqtraded.txt",
+      "download_attempts": 3,
+      "exclude_symbol_pattern": "\\$",
+      "name_rule": [
+        {
+          "reason": "unit",
+          "pattern": "-\\s*units?\\.?\\s*$|\\bunits?,? each consisting\\b|\\b(corporate|tangible equity) units?\\b"
+        },
+        {
+          "reason": "warrant",
+          "pattern": "\\bwarrants?\\b|\\(ADW\\)"
+        },
+        {
+          "reason": "right",
+          "pattern": "\\brights?\\b",
+          "unless": "representing the right to receive"
+        },
+        {
+          "reason": "preferred",
+          "pattern": "\\bpreferred\\b|\\bpreference\\b|\\bpfd\\b|\\bcapital trust\\b|^(?!.*\\b(american|global)\\b).*\\bdepositary shares?\\b"
+        },
+        {
+          "reason": "debt",
+          "pattern": "\\bnotes?\\b|\\bdebentures?\\b|\\bbonds?\\b|\\bETNs?\\b|%"
+        },
+        {
+          "reason": "structured_product",
+          "pattern": "\\bSTRATS\\b|\\bCorTS\\b|\\bPPlus\\b|corp(orate)? backed|asset-backed|synthetic fixed-income"
+        },
+        {
+          "reason": "fund",
+          "pattern": "\\bfund\\b"
+        }
+      ]
+    },
+    "eligibility": {
+      "min_price": 5.0,
+      "min_avg_dollar_volume_50d": 5000000,
+      "min_bars": 253,
+      "min_ranked_stocks": 100
+    },
+    "prices": {
+      "history_calendar_days": 548,
+      "batch_size": 100,
+      "max_attempts": 3,
+      "backoff_seconds": 20,
+      "pause_seconds": 1.0
+    },
+    "gates": {
+      "min_fetch_success_ratio": 0.95,
+      "max_stale_ratio": 0.05
+    },
+    "output": {
+      "exclude_columns": [
+        "close",
+        "sma50",
+        "sma150",
+        "sma200"
+      ]
+    },
+    "publish": {
+      "directory": "data",
+      "push_attempts": 3
+    }
+  },
+  "columns": [
+    "symbol",
+    "group",
+    "status",
+    "last_bar_date",
+    "bars",
+    "avg_dollar_volume_50d",
+    "atr14_pct",
+    "return_63d_pct",
+    "return_126d_pct",
+    "return_189d_pct",
+    "return_252d_pct",
+    "rs_strength_pct",
+    "rs_vs_benchmark",
+    "momentum_12_1_pct",
+    "rs_percentile",
+    "distance_from_52w_high_pct",
+    "distance_from_52w_low_pct",
+    "trend_template_status",
+    "trend_template_passed",
+    "tt_above_150_and_200",
+    "tt_150_above_200",
+    "tt_200_rising_21_sessions",
+    "tt_50_above_150_and_200",
+    "tt_above_50",
+    "tt_at_least_30pct_above_low",
+    "tt_within_25pct_of_high",
+    "tt_rs_percentile_at_least_70"
+  ],
+  "excluded_columns": [
+    "close",
+    "sma50",
+    "sma150",
+    "sma200"
+  ],
+  "files": {
+    "snapshot": "snapshots/2026/2026-11-25.csv.gz",
+    "meta": "snapshots/2026/2026-11-25.meta.json",
+    "snapshot_bytes": 227036,
+    "snapshot_sha256": "a9d560950c258cab7136ec811086af940648539abd46d1131756d1f7c71451a9"
+  }
+}
