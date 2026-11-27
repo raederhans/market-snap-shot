@@ -92,6 +92,14 @@ min_group_size = 20
 # Fewer non-overlapping periods than this: every verdict is insufficient_sample.
 min_non_overlapping_periods = 12
 
+[backfill]
+# Historical backfill (pipeline.backfill): a one-off, manually started reconstruction of the validation statistics on
+# today's listed stocks. Horizons, groups and minimum sizes are those of [validation]; the floors are [eligibility].
+history_calendar_days = 2192   # about 6 years of daily bars; the first 252 sessions only feed the first evaluation day
+step_sessions = 5              # one evaluation day every this many sessions
+top_dollar_volume = 500        # tier top_dollar_volume: the ranked stocks with the highest avg_dollar_volume_50d that day
+regime_sma_sessions = 200      # slices: benchmark close above / at or below its simple average of this many sessions
+
 [publish]
 directory = "data"            # in the repository that runs the job; latest.json sits at its top
 push_attempts = 3             # each one rebases onto the branch first; never a forced push

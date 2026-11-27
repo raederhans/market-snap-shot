@@ -2,6 +2,7 @@
 
     python -m pipeline.publish --snapshot <dir written by pipeline.run> --branch <branch> [--overwrite]
     python -m pipeline.publish --validation <dir written by pipeline.validate> --branch <branch>
+    python -m pipeline.publish --backfill <dir written by pipeline.backfill> --branch <branch>
 
 Two separate commits, the snapshot first: it is a point-in-time record that cannot be
 recomputed, so nothing that follows may stand between it and the push. Run from the
@@ -9,7 +10,9 @@ root of a clean checkout of <branch>. Without --overwrite (the scheduled job) a 
 day that is already published is left alone: a run on a market holiday rebuilds the
 previous session. Validation outputs always replace what is there (their rows are keyed
 by snapshot day and horizon). Never force-pushes: if the branch moved during the run the
-commit is rebased onto it, and any failure exits non-zero.
+commit is rebased onto it, and any failure exits non-zero. --backfill (the manually
+started historical backfill) commits its own directory, backfill/, and refuses a source
+that holds anything else, so it can never touch the forward record.
 """
 from __future__ import annotations
 import argparse
@@ -60,16 +63,30 @@ def publish_validation(validation_dir, repo_dir, branch, *, settings):
     return _commit_and_push(validation_dir, repo_dir, branch, f"Forward validation {document['latest_evaluation_day']}", settings)
 
 
+def publish_backfill(backfill_dir, repo_dir, branch, *, settings):
+    """Commit the outputs of pipeline.backfill. Returns True when a commit was pushed, False when nothing changed."""
+    backfill_dir, repo_dir = pathlib.Path(backfill_dir), pathlib.Path(repo_dir)
+    document = json.loads((backfill_dir / 'backfill' / 'summary.json').read_text(encoding='utf-8'))
+    entries = sorted(path.name for path in backfill_dir.iterdir())
+    if entries != ['backfill']:   # snapshots/, outcomes/ and validation/ belong to the daily job alone
+        raise RuntimeError(f'{backfill_dir} must hold backfill/ only, found: {", ".join(entries)}')
+    git(repo_dir, 'pull', '--rebase', 'origin', branch)
+    return _commit_and_push(backfill_dir, repo_dir, branch, f"Historical backfill through {document['data']['last_session']}", settings)
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(prog='python -m pipeline.publish', description=__doc__.splitlines()[0])
     source = parser.add_mutually_exclusive_group(required=True)
     source.add_argument('--snapshot', help='directory holding latest.json and snapshots/')
     source.add_argument('--validation', help='directory holding outcomes/ and validation/')
+    source.add_argument('--backfill', help='directory holding backfill/ and nothing else')
     parser.add_argument('--branch', required=True, help='branch to commit to and push')
     parser.add_argument('--overwrite', action='store_true', help='replace a trading day that is already published')
     args = parser.parse_args(argv)
     settings = load_config()['publish']
-    if args.validation:
+    if args.backfill:
+        publish_backfill(args.backfill, pathlib.Path.cwd(), args.branch, settings=settings)
+    elif args.validation:
         publish_validation(args.validation, pathlib.Path.cwd(), args.branch, settings=settings)
     else:
         publish(args.snapshot, pathlib.Path.cwd(), args.branch, overwrite=args.overwrite, settings=settings)

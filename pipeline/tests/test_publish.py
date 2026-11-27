@@ -197,3 +197,49 @@ def test_cli_publishes_validation_and_requires_exactly_one_source(tmp_path, repo
     for arguments in (['--branch', 'main'], ['--snapshot', 'a', '--validation', 'b', '--branch', 'main']):
         with pytest.raises(SystemExit):
             publish.main(arguments)
+
+
+def built_backfill(directory, last='2026-11-25', body='snapshot_day,horizon,tier\n'):
+    """A backfill directory laid out as pipeline.backfill leaves it."""
+    (directory / 'backfill').mkdir(parents=True, exist_ok=True)
+    (directory / 'backfill/summary.json').write_text(json.dumps({'record_type': 'backfill', 'data': {'last_session': last}}) + '\n')
+    (directory / 'backfill/daily.csv').write_text(body)
+    return directory
+
+
+def test_backfill_is_its_own_commit_and_touches_only_its_directory(tmp_path, repos, monkeypatch, capsys):
+    run(repos, build(tmp_path / 'day', '2026-11-25'))
+    publish.publish_validation(built_validation(tmp_path / 'validation'), repos['job'], 'main', settings=SETTINGS)
+    origin = repos['origin']
+    before = {path: published(origin, path) for path in ('data/latest.json', 'data/validation/daily.csv', 'data/validation/summary.json')}
+    results = built_backfill(tmp_path / 'backfill')
+    assert publish.publish_backfill(results, repos['job'], 'main', settings=SETTINGS) is True
+    assert git(origin, 'log', '-1', '--format=%s', 'main') == 'Historical backfill through 2026-11-25'
+    assert git(origin, 'show', '--format=', '--name-only', 'main').split('\n') == ['data/backfill/daily.csv', 'data/backfill/summary.json']
+    assert {path: published(origin, path) for path in before} == before          # the forward record and the snapshot are untouched
+    head = git(origin, 'rev-parse', 'main')
+    assert publish.publish_backfill(results, repos['job'], 'main', settings=SETTINGS) is False and git(origin, 'rev-parse', 'main') == head
+    capsys.readouterr()
+    # A source directory holding anything else is refused before git is touched: it could overwrite the forward record.
+    for extra in ('validation/summary.json', 'snapshots/2026/x.csv.gz', 'outcomes/2026/x.csv.gz', 'latest.json'):
+        mixed = built_backfill(tmp_path / ('mixed-' + extra.split('/')[0]))
+        (mixed / extra).parent.mkdir(parents=True, exist_ok=True)
+        (mixed / extra).write_text('{}')
+        with pytest.raises(RuntimeError, match='must hold backfill/ only'):
+            publish.publish_backfill(mixed, repos['job'], 'main', settings=SETTINGS)
+    with pytest.raises(FileNotFoundError):
+        publish.publish_backfill(tmp_path / 'never-written', repos['job'], 'main', settings=SETTINGS)
+    assert git(origin, 'rev-parse', 'main') == head and git(repos['job'], 'status', '--porcelain') == ''
+    # The command line, and a moved branch: rebased, not forced.
+    second_export(repos['seed'])
+    git(repos['seed'], 'pull', '--quiet', '--rebase', 'origin', 'main'), git(repos['seed'], 'push', '--quiet', 'origin', 'HEAD:main')
+    monkeypatch.chdir(repos['job'])
+    assert publish.main(['--backfill', str(built_backfill(results, body='snapshot_day,horizon,tier\n2021-11-24,5,eligible_pool\n')), '--branch', 'main']) == 0
+    assert git(origin, 'log', '--format=%s', '-2', 'main').split('\n') == ['Historical backfill through 2026-11-25', 'Export 2']
+    with pytest.raises(SystemExit):
+        publish.main(['--backfill', 'a', '--validation', 'b', '--branch', 'main'])
+    hook = origin / 'hooks' / 'pre-receive'
+    hook.write_text('#!/bin/sh\nexit 1\n')
+    hook.chmod(0o755)
+    with pytest.raises(RuntimeError, match='rejected 3 times'):
+        publish.publish_backfill(built_backfill(results, last='2026-11-27'), repos['job'], 'main', settings=SETTINGS)

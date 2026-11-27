@@ -71,7 +71,8 @@ def read_daily(path):
     return {(row['snapshot_day'], int(row['horizon'])): row for row in rows}
 
 
-def _text(value):
+def as_text(value):
+    """A daily-table cell: empty for unknown, floats at DAILY_DECIMALS."""
     if value is None:
         return ''
     return f'{value:.{DAILY_DECIMALS}f}' if isinstance(value, float) else str(value)
@@ -91,10 +92,15 @@ def evaluate(data, closes, day, today, horizon, config):
     rows, benchmark_return = outcomes.forward_outcomes(list(eligible.symbol), closes, day, today, config['benchmark'])
     pool = eligible.merge(pd.DataFrame(rows, columns=outcomes.OUTCOME_COLUMNS), on='symbol')
     stats, reasons = outcomes.cross_section(pool[pool.status == RANKED], config['validation'])
+    return rows, daily_row(day, horizon, today, rules_version, benchmark_return, stats, reasons)
+
+
+def daily_row(day, horizon, today, rules_version, benchmark_return, stats, reasons):
+    """One row of the daily table as text (also the rows of pipeline.backfill, which adds its own label columns)."""
     daily = {'snapshot_day': day, 'horizon': horizon, 'evaluated_on': today, 'rules_version': rules_version,
              'benchmark_return_pct': benchmark_return, **stats,
              'null_reasons': ';'.join(f'{name}={why}' for name, why in sorted(reasons.items()))}
-    return rows, {column: _text(daily[column]) for column in outcomes.DAILY_COLUMNS}
+    return {column: as_text(daily[column]) for column in outcomes.DAILY_COLUMNS}
 
 
 def validate(data_dir, closes_path, out_dir, *, config=None):

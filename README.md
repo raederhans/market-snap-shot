@@ -13,6 +13,8 @@ data/snapshots/YYYY/YYYY-MM-DD.meta.json       how that file was built
 data/outcomes/YYYY/YYYY-MM-DD_hNN.csv.gz       what followed that day's snapshot over NN sessions, per symbol
 data/validation/daily.csv                      one row per snapshot day and horizon
 data/validation/summary.json                   per horizon: sample size, averages, interval, verdict
+data/backfill/daily.csv                        historical backfill (separate, survivorship-biased): one row per day, horizon and tier
+data/backfill/summary.json                     historical backfill: tier -> horizon -> slice -> metric
 ```
 
 - `latest.json`: `trading_day`, `generated_at` (UTC), `snapshot` and `meta` (paths relative to `data/`), `snapshot_bytes`, `snapshot_sha256`.
@@ -120,6 +122,47 @@ Per horizon: `evaluated_days`, `non_overlapping_periods`, `sample_status` (`insu
 - **Many intervals, looked at every day.** Several metrics and three horizons each get a 95% interval, so some will exclude zero by chance, and each verdict is recomputed as the record grows. Nothing is adjusted for either; a verdict that appears and later disappears was noise.
 - **Not advice.** A description of features and rankings, not a trading strategy or a forecast.
 
+## Historical backfill
+
+The forward record needs months to years before it says anything. `data/backfill/` holds a **preliminary reference** made once by hand (workflow `.github/workflows/backfill.yml`, manual start only): the same statistics reconstructed on about six years of past sessions. **It is not the forward record, it is biased, and the two must not be mixed.** `summary.json` carries `record_type: "backfill"`.
+
+How it is built (`pipeline/backfill.py`, settings in `[backfill]` of `pipeline/config.toml`):
+
+1. About six years of adjusted daily bars for **the stocks listed today** and SPY, in one download.
+2. An evaluation day D every 5 sessions, from the first session with 253 bars of history.
+3. For each D, from bars up to D only: the ranked pool (same price, dollar-volume and history floors as the daily snapshot), `rs_percentile` within that pool, the eight trend-template checks and the distance from the 52-week high. `pipeline/backfill_features.py` computes them for all stocks at once; a test holds every value to the daily job's ranking code run on bars cut off at D.
+4. Excess return over SPY from the close of D to the close 5, 20 and 60 sessions later, same download. A stock without a bar on D+h is counted as missing, never filled.
+5. Two tiers: `top_dollar_volume`, the 500 ranked stocks with the highest `avg_dollar_volume_50d` on D (the primary result: large, liquid stocks), and `eligible_pool`, every ranked stock. RS groups use the percentile within the whole pool in both.
+6. Slices of evaluation days: `full_sample`; `benchmark_above_sma200` and `benchmark_below_sma200` (SPY's close on D above, or at or below, its 200-session average); `year_YYYY` (the year of D). Each slice takes its own non-overlapping days and gets its own interval and verdict, `insufficient_sample` below 12 periods.
+
+The daily cross-section and the aggregation are the forward record's functions, so every metric means what it means there.
+
+### `backfill/daily.csv`
+
+One row per (D, h, tier). The columns of `validation/daily.csv` with the same definitions (`snapshot_day` is D, although no snapshot of D exists; `evaluated_on` is D+h; `rules_version` is that of the code that ran; `pool` is the size of the tier), plus:
+
+| Column | Definition |
+| --- | --- |
+| `tier` | `top_dollar_volume` or `eligible_pool`; third column of the file. |
+| `year` | Calendar year of D. |
+| `benchmark_trend` | `above` or `below`: SPY's close on D against its 200-session simple average (`regime_sma_sessions`); empty when fewer closes than that exist. |
+
+### `backfill/summary.json`
+
+Top level: `schema_version`, `record_type` (`backfill`), `backfill_version`, `validation_version`, `benchmark`, `confidence_level`, `min_non_overlapping_periods`, `generated_at`, `provider`, `rules_version`, `universe` (directory URL and file time, stocks after the name filter, `sample_limit`), `data` (symbols requested and fetched, rejected, first and last session, download time), `parameters` (the `[backfill]`, `[eligibility]` and `[validation]` settings), `evaluation` (first and last evaluation day, their number, days by benchmark trend, days skipped because fewer than `min_ranked_stocks` stocks ranked), `primary_tier`, `tiers` and `limitations`. `tiers.<tier>.horizons.<h>.slices.<slice>` has the per-horizon fields of `validation/summary.json` (without `non_overlapping_days` and `snapshot_days_without_evaluation`: the grid skips sessions by design, and the kept days follow from `daily.csv` by the same rule).
+
+No per-symbol prices or outcomes are published.
+
+### What the backfill cannot show
+
+- **Survivorship.** Only stocks listed today are in it. Companies that were large in the past and were later acquired, taken private or failed are missing, so results are too favourable: most of all absolute ones (`pool_excess_pct`, the excess of stocks passing the template), less so the spreads between groups, which are still not free of it.
+- **Today's adjustment.** Prices are adjusted as of the download. Returns, average comparisons and distances from the high are unaffected, but the price and dollar-volume floors and the dollar-volume ranking use adjusted levels, not the prices of that day.
+- **Not obtainable, no costs.** Entry is the close of D, the close the features use. No commission, spread, market impact or tax.
+- **Not a strategy backtest.** Average excess returns of groups in a cross-section: no entry or exit rule, sizing, turnover or capacity.
+- **Many tests on one history.** Two tiers, three horizons, about nine slices and six metrics, each with a 95% interval: some exclude zero by chance, and nothing is adjusted.
+- **Equal-weight means** react to bad prints and extreme moves; `rank_ic` is the more robust reference.
+- **Few independent episodes.** The sessions below the 200-session average are mostly one bear market. The interval treats non-overlapping periods as independent, which overstates what a slice knows; a year slice rarely reaches 12 periods.
+
 ## How a snapshot is built
 
 1. **Universe**: Nasdaq Trader `nasdaqtraded.txt` rows with `ETF = N` and `Test Issue = N`, minus warrants, units, rights, preferreds, debt, structured products and funds identified by name rules.
@@ -146,6 +189,7 @@ python -m pip install -r pipeline/requirements.txt pytest==9.2.0     # Python 3.
 python -m pytest -q                                                  # mocked, no network
 python -m pipeline.run --out <dir> [--limit N] [--closes <file>]     # real download; run from the repository root
 python -m pipeline.validate --data data --closes <file> --out <dir>  # needs the closes of a run and published snapshots
+python -m pipeline.backfill --out <dir> [--limit N]                  # historical backfill: one large download, minutes
 ```
 
 `--limit N` samples N stocks for a trial; `sample_limit` in the metadata is then not null and percentiles are relative to the sample only. The calculations are in `remote-mcp/stock_research/` (`universe_rank.py`, `technical_intelligence.py`, `core.py`), kept at the path they have in the source repository; `pipeline/` fetches, checks, writes and publishes; the validation statistics are in `pipeline/outcomes.py` and `pipeline/summary.py`.
