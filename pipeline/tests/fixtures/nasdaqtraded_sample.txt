@@ -1,0 +1,55 @@
+Nasdaq Traded|Symbol|Security Name|Listing Exchange|Market Category|ETF|Round Lot Size|Test Issue|Financial Status|CQS Symbol|NASDAQ Symbol|NextShares
+Y|AAPL|Apple Inc. - Common Stock|Q|Q|N|40|N|N||AAPL|N
+Y|NVDA|NVIDIA Corporation - Common Stock|Q|Q|N|100|N|N||NVDA|N
+Y|MSFT|Microsoft Corporation - Common Stock|Q|Q|N|40|N|N||MSFT|N
+Y|AVGO|Broadcom Inc. - Common Stock|Q|Q|N|40|N|N||AVGO|N
+Y|TSLA|Tesla, Inc.  - Common Stock|Q|Q|N|40|N|N||TSLA|N
+Y|UBER|Uber Technologies, Inc. Common Stock|N| |N|100|N||UBER|UBER|N
+Y|PLTR|Palantir Technologies Inc. - Class A Common Stock|Q|Q|N|100|N|N||PLTR|N
+Y|MU|Micron Technology, Inc. - Common Stock|Q|Q|N|10|N|N||MU|N
+Y|NOW|ServiceNow, Inc. Common Stock|N| |N|100|N||NOW|NOW|N
+Y|TSM|Taiwan Semiconductor Manufacturing Company Ltd.|N| |N|40|N||TSM|TSM|N
+Y|ASML|ASML Holding N.V. - New York Registry Shares|Q|Q|N|10|N|N||ASML|N
+Y|ACN|Accenture plc Class A Ordinary Shares (Ireland)|N| |N|100|N||ACN|ACN|N
+Y|LIN|Linde plc - Ordinary Shares|Q|Q|N|40|N|N||LIN|N
+N|BRK.A|Berkshire Hathaway Inc. Common Stock|N| |N|1|N||BRK.A|BRK.A|N
+Y|BRK.B|Berkshire Hathaway Inc. New Common Stock|N| |N|40|N||BRK.B|BRK.B|N
+Y|BF.B|Brown Forman Inc Class B Common Stock|N| |N|100|N||BF.B|BF.B|N
+Y|GOOG|Alphabet Inc. - Class C Capital Stock|Q|Q|N|40|N|N||GOOG|N
+Y|BABA|Alibaba Group Holding Limited American Depositary Shares each representing eight Ordinary share|N| |N|100|N||BABA|BABA|N
+Y|AMX|America Movil, S.A.B. de C.V. American Depositary Shares (each representing the right to receive twenty (20) Series B Shares|N| |N|100|N||AMX|AMX|N
+Y|KOF|Coca Cola Femsa S.A.B. de C.V.  American Depositary Shares, each representing 10 Units (each Unit consists of 3 Series B Shares and 5 Series L Shares)|N| |N|100|N||KOF|KOF|N
+Y|ET|Energy Transfer LP Common Units|F| |N|100|N||ET|ET|N
+Y|AB|AllianceBernstein Holding L.P.  Units|N| |N|100|N||AB|AB|N
+Y|CEG|Constellation Energy Corporation - Common Stock When-Issued|Q|Q|N|40|N|N||CEG|N
+Y|SHOP|Shopify Inc. - Class A Subordinate Voting Shares|Q|Q|N|100|N|N||SHOP|N
+Y|SPOT|Spotify Technology S.A. Ordinary Shares|N| |N|40|N||SPOT|SPOT|N
+Y|ARM|Arm Holdings plc - American Depositary Shares|Q|Q|N|40|N|N||ARM|N
+Y|IEP|Icahn Enterprises L.P. - Depositary Units representing Limited Partner Interests|Q|Q|N|100|N|N||IEP|N
+Y|ARCC|Ares Capital Corporation - Closed End Fund|Q|Q|N|100|N|N||ARCC|N
+Y|PDI|PIMCO Dynamic Income Fund Common Stock|N| |N|100|N||PDI|PDI|N
+Y|SPY|State Street SPDR S&P 500 ETF Trust|P| |Y|40|N||SPY|SPY|N
+Y|QQQ|Invesco QQQ Trust, Series 1|Q|G|Y|40|N|N||QQQ|N
+Y|ZZZTX|TXSE Test Stk 5 Common Stock|F| |N|40|Y||ZZZTX|ZZZTX|N
+Y|PSNYW|Polestar Automotive Holding UK Limited - Class C-1 ADS (ADW)|Q|G|N|100|N|N||PSNYW|N
+Y|BAC$E|Bank of America Corporation Depositary Sh repstg 1/1000th Perp Pfd Ser E|N| |N|100|N||BACpE|BAC-E|N
+Y|ATH$A|Athene Holding Ltd. Depositary Shares, Each Representing a 1/1,000th Interest in a 6.35% Fixed-to-Floating Rate Perpetual Non-Cumulative Preference Share, Series A|N| |N|100|N||ATHpA|ATH-A|N
+Y|WAFDP|WaFd, Inc. - Depositary Shares|Q|Q|N|100|N|N||WAFDP|N
+Y|DDT|Dillard's Capital Trust I|F| |N|100|N||DDT|DDT|N
+Y|BPOPM|Popular, Inc. - Popular Capital Trust II - 6.125% Cumulative Monthly Income Trust Preferred Securities|Q|Q|N|100|N|N||BPOPM|N
+Y|SOJC|Southern Company (The) Series 2017B 5.25% Junior Subordinated Notes due December 1, 2077|N| |N|100|N||SOJC|SOJC|N
+Y|AFGB|American Financial Group, Inc. 5.875% Subordinated Debentures due 2059|N| |N|100|N||AFGB|AFGB|N
+Y|VXX|iPath Series B S&P 500 VIX Short-Term Futures ETN|Z| |N|100|N||VXX|VXX|N
+Y|GJT|Synthetic Fixed-Income Securities, Inc. Floating Rate Structured Repackaged Asset-Backed Trust Securities Certificates, Series 2006-3|N| |N|100|N||GJT|GJT|N
+Y|KTN|Structured Products Corp 8.205% CorTS 8.205% Corporate Backed Trust Securities (CorTS)|N| |N|100|N||KTN|KTN|N
+Y|SONN|Southern Company (The) 2026 Series A Corporate Units|N| |N|100|N||SONN|SONN|N
+Y|NOVTU|Novanta Inc. - Tangible Equity Units|Q|Q|N|100|N|N||NOVTU|N
+Y|AACIW|Armada Acquisition Corp. III - Warrant|Q|G|N|100|N|N||AACIW|N
+Y|ALUB.W|Alussa Energy Acquisition Corp. II Redeemable Warrants, each whole warrant exercisable for one Class A ordinary share at an exercise price of $11.50 per share|N| |N|100|N||ALUB.WS|ALUB+|N
+Y|AACIU|Armada Acquisition Corp. III - Units|Q|G|N|100|N|N||AACIU|N
+Y|AAC.U|Ares Acquisition Corporation III Units, each consisting of one Class A ordinary share and one-tenth of one redeemable warrant|N| |N|100|N||AAC.U|AAC=|N
+Y|AACPR|Apogee Acquisition Corp - Rights|Q|G|N|100|N|N||AACPR|N
+Y|AIIA.R|AI Infrastructure Acquisition Corp. Rights, each entitling the holder to receive one-fifth (1/5) of one Class A Ordinary Share|N| |N|100|N||AIIAr|AIIA^|N
+Y|ADC$A|Agree Realty Corporation Depositary Shares, each representing 1/1,000th of a 4.250% Series A Cumulative Redeemable Preferred Stock|N| |N|100|N||ADCpA|ADC-A|N
+Y|CELG.R|Bristol-Myers Squibb Company Celegne Contingent Value Rights|N| |N|100|N||CELGr|CELG^|N
+File Creation Time: 1125202621:34|||||

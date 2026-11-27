@@ -1,0 +1,6 @@
+# Batch job only (GitHub Actions). numpy, pandas and exchange-calendars are pinned to the
+# versions the shared calculation library is tested with, so every user computes identically.
+numpy==2.3.5
+pandas==2.2.3
+exchange-calendars==4.13.3
+yfinance==1.8.0

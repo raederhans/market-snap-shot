@@ -1,0 +1,33 @@
+{
+  "generator": "scripts/export_public_pipeline.py",
+  "source_commit": "78199d612d6b3e804d7f1a7ce919949d7bfdd2be",
+  "repository": "raederhans/market-snap-shot",
+  "files": {
+    ".github/workflows/daily-market-snapshot.yml": "df175320371c5183545972330024206c6b6b56e93ca058549bc78442321a1d25",
+    ".gitignore": "f26fa1a0b582c3aa8f8d59137c832400adf552d3490f2fd088ba92c99778c0da",
+    "README.md": "fc1115879d4d9fd382c1ef7dc6f1f2c86e95e46d770601a67a89c7fc0c1120e4",
+    "pipeline/__init__.py": "2e4dcaf60d05a7e9bec5a1fb103b85f408a4e105f6e2f62d3683b98f06809ffa",
+    "pipeline/config.toml": "49f82016a41dbd435bc8c63adbc1fb2c3ad1016ba73dabab3d10e434ebd71236",
+    "pipeline/gates.py": "5b6b7fb74f6ae94b0c5f3c3ea1df39d5a885341d9e93ca2efa291a4326be0233",
+    "pipeline/prices.py": "17e2ebe0588badbd97faf393992e570818e269f00509099b84e6b208b1d5b7ea",
+    "pipeline/publish.py": "9cc8265745574178f51adf48cb3565c757482a3d9888f317fd2cd3960dad57cd",
+    "pipeline/requirements.txt": "74eaed314543dd50c284164b1971ee1b27ca2feee02be4dadcd430f074b0180b",
+    "pipeline/run.py": "4919f3193acbcb93e457b059de6b0cbe9dc560a8e53f650964297c598ffa3e68",
+    "pipeline/snapshot.py": "be179662ef0ad485aaa293353507ee9ddf78fae91e8cd0d3b3aba5d179247d17",
+    "pipeline/tests/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "pipeline/tests/fixtures/nasdaqtraded_sample.txt": "d870daa52e292690ec30066bfa7ed2e0bee36106c101304d1968157c1c68c3e3",
+    "pipeline/tests/test_gates.py": "fef6cf9faf2eeaafd690c41bae10da01f5541fc70ca7a9b6326065f0f23ad7cb",
+    "pipeline/tests/test_prices.py": "45cdeb0c59864cc1de70b5993e8d701de0bbadf896fe41fd3d08a2dfc1ceb157",
+    "pipeline/tests/test_publish.py": "6f3134aedd5b45748a53f7bbb8af0a2c628660d73171f3c9b30e025c288cd27c",
+    "pipeline/tests/test_run.py": "1559e4840beff3639e350e982842dc15860acab5d13860c1794ea41b0d35cb79",
+    "pipeline/tests/test_universe.py": "0504dce033c91c10172b1287552700b88a19deb3340b4a00a4032df4489cd75b",
+    "pipeline/universe.py": "ca5c8c6906877875bc7d6b97e35e2eb0b058548496925f2e547448debae08f89",
+    "pytest.ini": "99104c63ae4474a4e82493e354bb3ca36f58613b20dd0f286fceaaa373e35fc3",
+    "remote-mcp/stock_research/__init__.py": "2c77d084d826eefc8c327d7fc22214000782a840d3001377b7e4926f451fc977",
+    "remote-mcp/stock_research/core.py": "2cd66736a340050bb36aa8495fcf6311a8181556242f8c9d8d354717c8e315ab",
+    "remote-mcp/stock_research/technical_intelligence.py": "5bedc589af2353f104d40a13ac8cf05d4930141ca26670f7958f93fa2802755b",
+    "remote-mcp/stock_research/universe_rank.py": "91517aade276f573ad040bbb46b9f28a7ba2f5f8ea9a3ed768d0a384d8bf5e44",
+    "remote-mcp/tests/test_technical_intelligence.py": "8abdd8f8347099cf7148695356ad9adcfdffd8c77dedf256c5b3704839bf655e",
+    "remote-mcp/tests/test_universe_rank.py": "986f92894db55566eb21b9b63d3ac3e26049b2df2ef7860245ae7f4d8482a4ca"
+  }
+}
