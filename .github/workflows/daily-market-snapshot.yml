@@ -1,6 +1,8 @@
 # Builds the daily relative-strength snapshot and commits it to data/ on the branch
-# the run started from (the default branch for scheduled runs). Features and rankings
-# only: no signals. Needs no secret: the workflow's own GITHUB_TOKEN pushes the commit.
+# the run started from (the default branch for scheduled runs), then matches earlier
+# snapshots with what followed them and commits that record separately. Features,
+# rankings and their realised outcomes only: no signals. Needs no secret: the
+# workflow's own GITHUB_TOKEN pushes the commits.
 #
 # The daily commit also keeps the schedule alive: GitHub disables scheduled workflows
 # in public repositories after 60 days without repository activity.
@@ -37,15 +39,25 @@ jobs:
       - name: Tests (mocked, no network)
         run: python -m pytest -q
 
-      # Exits non-zero when an integrity gate fails; the publish step then never runs.
+      # Exits non-zero when an integrity gate fails; nothing below then runs. --closes keeps this
+      # run's adjusted closes on the runner for the validation step; they are never published.
       - name: Build snapshot
-        run: python -m pipeline.run --out "$RUNNER_TEMP/snapshot"
+        run: python -m pipeline.run --out "$RUNNER_TEMP/snapshot" --closes "$RUNNER_TEMP/closes.csv.gz"
 
-      # A scheduled run keeps a trading day that is already published (a market-holiday
-      # run rebuilds the previous session); a manual run replaces it.
-      - name: Publish to data/
+      # First commit. A scheduled run keeps a trading day that is already published (a
+      # market-holiday run rebuilds the previous session); a manual run replaces it.
+      - name: Publish snapshot to data/
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then overwrite="--overwrite"; else overwrite=""; fi
           python -m pipeline.publish --snapshot "$RUNNER_TEMP/snapshot" --branch "$GITHUB_REF_NAME" $overwrite
+
+      # The snapshot is pushed by now. From here on a failure marks the run as failed but cannot
+      # touch it: these steps only read data/ and write outcomes/ and validation/.
+      - name: Forward validation
+        run: python -m pipeline.validate --data data --closes "$RUNNER_TEMP/closes.csv.gz" --out "$RUNNER_TEMP/validation"
+
+      # Second commit; nothing is committed when the results are identical to what is published.
+      - name: Publish validation to data/
+        run: python -m pipeline.publish --validation "$RUNNER_TEMP/validation" --branch "$GITHUB_REF_NAME"

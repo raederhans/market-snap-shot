@@ -163,14 +163,46 @@ def test_every_gate_failure_publishes_nothing(tmp_path, config, provider, fetch,
 
 def test_cli_exit_codes(tmp_path, config, provider, monkeypatch, capsys):
     monkeypatch.setattr(pipeline_run, 'load_config', lambda: config)
-    assert pipeline_run.main(['--out', str(tmp_path / 'ok')]) == 0
+    assert pipeline_run.main(['--out', str(tmp_path / 'ok'), '--closes', str(tmp_path / 'closes.csv.gz')]) == 0
     assert (tmp_path / 'ok' / 'latest.json').is_file() and 'rows' in capsys.readouterr().out
+    assert prices.read_closes(tmp_path / 'closes.csv.gz').index[-1] == DAY
     provider['fetch'] = drop('SPY')
     assert pipeline_run.main(['--out', str(tmp_path / 'bad')]) == 1
     assert 'INTEGRITY GATE FAILED' in capsys.readouterr().err and not (tmp_path / 'bad').exists()
     with pytest.raises(SystemExit):
         pipeline_run.main(['--out', str(tmp_path / 'bad'), '--limit', '0'])
 
+
+
+def test_closes_for_validation_are_saved_beside_the_snapshot_never_inside_it(tmp_path, config, provider, capsys):
+    def partial(symbols, start, end, **settings):
+        data = synthetic(symbols, start, end)
+        data['MU'] = data['MU'].iloc[:-1]                       # no bar on the snapshot day
+        del data['UBER']                                        # nothing downloaded
+        return data
+    provider['fetch'] = partial
+    path = tmp_path / 'scratch' / 'closes.csv.gz'
+    pipeline_run.run(tmp_path / 'out', now=NOW, config=config, closes_path=path)
+    assert sorted(p.name for p in (tmp_path / 'out').rglob('*') if p.is_file()) == [f'{DAY}.csv.gz', f'{DAY}.meta.json', 'latest.json']
+    assert [p.name for p in path.parent.iterdir()] == ['closes.csv.gz']             # no partial file left behind
+    closes = prices.read_closes(path)
+    bars = synthetic(provider['calls'][0]['symbols'], provider['calls'][0]['start'], provider['calls'][0]['end'])
+    assert closes.index[-1] == DAY and list(closes.index) == [d.date().isoformat() for d in bars['SPY'].index]
+    assert set(closes.columns) == set(read_snapshot(tmp_path / 'out').index) and 'UBER' not in closes.columns
+    assert closes['AAPL'].tolist() == bars['AAPL'].close.tolist()                   # adjusted closes, read back exactly
+    assert pd.isna(closes.loc[DAY, 'MU']) and closes['MU'].iloc[-2] == bars['MU'].close.iloc[-2]   # an absent bar stays empty
+
+    provider['fetch'] = drop('SPY')                                                # a failed gate writes neither
+    with pytest.raises(IntegrityError):
+        pipeline_run.run(tmp_path / 'gated', now=NOW, config=config, closes_path=tmp_path / 'gated.csv.gz')
+    assert not (tmp_path / 'gated').exists() and not (tmp_path / 'gated.csv.gz').exists()
+
+    # A closes file that cannot be written is reported, and the snapshot is still complete and returned.
+    provider['fetch'] = synthetic
+    (tmp_path / 'blocker').write_text('a file where a directory is needed')
+    meta = pipeline_run.run(tmp_path / 'kept', now=NOW, config=config, closes_path=tmp_path / 'blocker' / 'closes.csv.gz')
+    assert meta['trading_day'] == DAY and (tmp_path / 'kept' / 'latest.json').is_file()
+    assert 'closes not saved' in capsys.readouterr().err
 
 
 def test_limit_samples_stocks_but_always_keeps_the_watchlist(tmp_path, config, provider):

@@ -1,8 +1,10 @@
 """Daily market snapshot: universe -> prices -> integrity gates -> ranking -> files.
 
-    python -m pipeline.run --out <dir> [--limit N]
+    python -m pipeline.run --out <dir> [--limit N] [--closes <file>]
 
 Nothing is written unless every gate passes; a failed gate exits non-zero.
+--closes also saves this run's adjusted closes for pipeline.validate (a scratch file,
+never published).
 """
 from __future__ import annotations
 import argparse
@@ -14,7 +16,7 @@ from importlib.metadata import version
 import pandas as pd
 from stock_research import universe_rank
 from stock_research.core import DataQualityError
-from . import gates, prices, snapshot, universe
+from . import gates, outcomes, prices, snapshot, universe
 
 CONFIG_PATH = pathlib.Path(__file__).with_name('config.toml')
 
@@ -24,6 +26,7 @@ def load_config(path=CONFIG_PATH):
     if config['benchmark'] not in config['etf_watchlist']:
         raise ValueError('benchmark must be listed in etf_watchlist')
     snapshot.published_columns(config['output']['exclude_columns'])  # a typo fails here, before any download
+    outcomes.check_settings(config['validation'])
     return config
 
 
@@ -33,7 +36,7 @@ def sample(symbols, limit):
     return symbols[::step][:limit]
 
 
-def run(out_dir, *, limit=None, now=None, config=None):
+def run(out_dir, *, limit=None, now=None, config=None, closes_path=None):
     config = config or load_config()
     now = pd.Timestamp.now(tz='UTC') if now is None else pd.Timestamp(now)
     sessions = gates.completed_sessions(now)
@@ -98,18 +101,28 @@ def run(out_dir, *, limit=None, now=None, config=None):
         'failed_symbols': {'no_data': no_data, 'invalid_bars': dict(sorted(invalid.items()))},
         'config': config,
     }
-    return snapshot.write_snapshot(out_dir, meta['trading_day'], rows, meta, config['output']['exclude_columns'])
+    meta = snapshot.write_snapshot(out_dir, meta['trading_day'], rows, meta, config['output']['exclude_columns'])
+    if closes_path is not None:
+        # The snapshot above is complete and cannot be recomputed later. Saving the scratch input of
+        # the validation step must not stop it from being published: a failure is reported here and
+        # pipeline.validate then fails on the missing file, after the snapshot has been pushed.
+        try:
+            prices.write_closes(closes_path, bars)
+        except Exception as exc:
+            print(f'closes not saved ({type(exc).__name__}: {exc}); the validation step will fail', file=sys.stderr)
+    return meta
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(prog='python -m pipeline.run', description=__doc__.splitlines()[0])
     parser.add_argument('--out', required=True, help='directory that receives snapshots/ and latest.json')
     parser.add_argument('--limit', type=int, help='local trial: sample N stocks instead of the full universe')
+    parser.add_argument('--closes', help='also write the adjusted closes of this run here (input of pipeline.validate)')
     args = parser.parse_args(argv)
     if args.limit is not None and args.limit < 1:
         parser.error('--limit must be a positive number of stocks')
     try:
-        meta = run(args.out, limit=args.limit)
+        meta = run(args.out, limit=args.limit, closes_path=args.closes)
     except gates.IntegrityError as exc:
         print(f'INTEGRITY GATE FAILED, nothing published: {exc}', file=sys.stderr)
         return 1

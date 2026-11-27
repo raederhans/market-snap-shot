@@ -5,6 +5,8 @@ run: no price cache, no second source, no substitute when a symbol is missing.
 """
 from __future__ import annotations
 import logging
+import os
+import pathlib
 import sys
 import time
 import pandas as pd
@@ -99,3 +101,24 @@ def _snap_float_noise(d):
     d['high'] = d.high.mask((d.high < top) & (top - d.high <= FLOAT_NOISE * top), top)
     d['low'] = d.low.mask((d.low > bottom) & (d.low - bottom <= FLOAT_NOISE * bottom), bottom)
     return d
+
+
+def write_closes(path, bars):
+    """Adjusted closes of this run as one gzip CSV: a row per session date, a column per symbol with usable bars.
+
+    Scratch input for pipeline.validate, kept outside the published directory. An empty
+    cell means the symbol has no bar that session. Written under a temporary name and
+    renamed, so a reader never sees half a file.
+    """
+    frame = pd.concat({symbol: d.close for symbol, d in bars.items()}, axis=1).sort_index()
+    frame.index = [stamp.tz_convert('America/New_York').date().isoformat() for stamp in frame.index]
+    path = pathlib.Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    partial = path.with_name(path.name + '.partial')
+    frame.to_csv(partial, index_label='session', compression='gzip')   # full float repr: read back exactly
+    os.replace(partial, path)
+
+
+def read_closes(path):
+    """The matrix written by write_closes: ISO session dates ascending, one column per symbol, NaN = no bar."""
+    return pd.read_csv(path, index_col='session', compression='gzip', float_precision='round_trip')   # the default parser is not exact

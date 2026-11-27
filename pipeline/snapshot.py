@@ -15,7 +15,8 @@ from stock_research.universe_rank import COLUMNS
 
 SCHEMA_VERSION = 2  # 2: columns listed in output.exclude_columns are absent (metadata: excluded_columns)
 # Output precision only; ranking uses the unrounded values.
-DECIMALS = {'close': 4, 'sma50': 4, 'sma150': 4, 'sma200': 4, 'rs_vs_benchmark': 4, 'avg_dollar_volume_50d': 0}
+DECIMALS = {'close': 4, 'sma50': 4, 'sma150': 4, 'sma200': 4, 'rs_vs_benchmark': 4, 'avg_dollar_volume_50d': 0,
+            'forward_return_pct': 4, 'forward_excess_pct': 4}  # the last two: outcome files (pipeline.validate)
 DEFAULT_DECIMALS = 2
 
 

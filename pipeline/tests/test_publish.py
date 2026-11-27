@@ -1,8 +1,8 @@
-"""Publish step against a local bare repository. Real git, no network."""
+"""Publish steps against a local bare repository: the snapshot commit, then the validation commit. Real git, no network."""
 import json
 import subprocess
 import pytest
-from pipeline import publish, snapshot
+from pipeline import publish, snapshot, validate
 from pipeline.run import load_config
 
 SETTINGS = load_config()['publish']
@@ -137,3 +137,63 @@ def test_cli_publishes_from_the_current_directory(tmp_path, repos, monkeypatch):
     monkeypatch.chdir(repos['job'])
     assert publish.main(['--snapshot', str(build(tmp_path / 'day', '2026-11-25')), '--branch', 'main']) == 0
     assert published(repos['origin'], 'data/latest.json').count('2026-11-25') >= 1
+
+
+def built_validation(directory, day='2026-11-25', body='snapshot_day,horizon\n'):
+    """A validation directory laid out as pipeline.validate leaves it."""
+    for name, text in {'validation/summary.json': json.dumps({'latest_evaluation_day': day}) + '\n', 'validation/daily.csv': body,
+                       'outcomes/2026/2026-11-18_h05.csv.gz': 'outcome bytes'}.items():
+        (directory / name).parent.mkdir(parents=True, exist_ok=True)
+        (directory / name).write_text(text)
+    return directory
+
+
+def test_validation_is_a_second_commit_after_the_snapshot(tmp_path, repos, capsys):
+    assert run(repos, build(tmp_path / 'day', '2026-11-25')) is True
+    snapshot_commit = git(repos['origin'], 'rev-parse', 'main')
+    results = built_validation(tmp_path / 'validation')
+    assert publish.publish_validation(results, repos['job'], 'main', settings=SETTINGS) is True
+    origin = repos['origin']
+    assert git(origin, 'log', '--format=%s', 'main').split('\n') == ['Forward validation 2026-11-25', 'Market snapshot 2026-11-25', 'Export']
+    assert git(origin, 'rev-parse', 'main~1') == snapshot_commit                       # the snapshot commit is untouched history
+    assert git(origin, 'show', '--format=', '--name-only', 'main').split('\n') == [
+        'data/outcomes/2026/2026-11-18_h05.csv.gz', 'data/validation/daily.csv', 'data/validation/summary.json']
+    assert json.loads(published(origin, 'data/latest.json'))['trading_day'] == '2026-11-25'
+    # A rerun with identical results (a market-holiday run) commits nothing; changed results replace the files.
+    head = git(origin, 'rev-parse', 'main')
+    assert publish.publish_validation(results, repos['job'], 'main', settings=SETTINGS) is False
+    assert 'nothing to commit' in capsys.readouterr().out and git(origin, 'rev-parse', 'main') == head
+    built_validation(results, body='snapshot_day,horizon\n2026-11-18,5\n')
+    assert publish.publish_validation(results, repos['job'], 'main', settings=SETTINGS) is True
+    assert published(origin, 'data/validation/daily.csv') == 'snapshot_day,horizon\n2026-11-18,5'
+    assert git(origin, 'rev-list', '--count', 'main') == '4' and git(repos['job'], 'status', '--porcelain') == ''
+
+
+def test_a_failed_validation_leaves_the_published_snapshot_alone(tmp_path, repos, monkeypatch, capsys):
+    """The workflow order: snapshot pushed first; the validation steps then fail without touching it."""
+    monkeypatch.chdir(repos['job'])
+    assert publish.main(['--snapshot', str(build(tmp_path / 'day', '2026-11-25')), '--branch', 'main']) == 0
+    head = git(repos['origin'], 'rev-parse', 'main')
+    arguments = ['--data', 'data', '--closes', str(tmp_path / 'never-written.csv.gz'), '--out', str(tmp_path / 'validation')]
+    assert validate.main(arguments) == 1 and 'FORWARD VALIDATION FAILED' in capsys.readouterr().err   # the step exits non-zero
+    with pytest.raises(FileNotFoundError):                                           # and so would the publish step after it
+        publish.main(['--validation', str(tmp_path / 'validation'), '--branch', 'main'])
+    assert git(repos['origin'], 'rev-parse', 'main') == head and git(repos['job'], 'status', '--porcelain') == ''
+    assert git(repos['origin'], 'ls-tree', '-r', '--name-only', 'main').split('\n') == [
+        'README.md', 'data/latest.json', 'data/snapshots/2026/2026-11-25.csv.gz', 'data/snapshots/2026/2026-11-25.meta.json']
+    # A validation push that is rejected fails as well, and the snapshot is still what is published.
+    hook = repos['origin'] / 'hooks' / 'pre-receive'
+    hook.write_text('#!/bin/sh\nexit 1\n')
+    hook.chmod(0o755)
+    with pytest.raises(RuntimeError, match='rejected 3 times'):
+        publish.publish_validation(built_validation(tmp_path / 'results'), repos['job'], 'main', settings=SETTINGS)
+    assert git(repos['origin'], 'rev-parse', 'main') == head
+
+
+def test_cli_publishes_validation_and_requires_exactly_one_source(tmp_path, repos, monkeypatch):
+    monkeypatch.chdir(repos['job'])
+    assert publish.main(['--validation', str(built_validation(tmp_path / 'validation')), '--branch', 'main']) == 0
+    assert git(repos['origin'], 'log', '-1', '--format=%s', 'main') == 'Forward validation 2026-11-25'
+    for arguments in (['--branch', 'main'], ['--snapshot', 'a', '--validation', 'b', '--branch', 'main']):
+        with pytest.raises(SystemExit):
+            publish.main(arguments)

@@ -129,3 +129,18 @@ def test_adjustment_float_noise_is_snapped_but_real_inversions_are_rejected():
     raw.iloc[1, raw.columns.get_loc('low')] = 10.01                        # a cent above the close is bad data
     with pytest.raises(DataQualityError):
         prices.session_bars(raw, sessions())
+
+
+def test_closes_round_trip_exactly_with_gaps_and_awkward_symbols(tmp_path):
+    closes = gates.completed_sessions(pd.Timestamp('2026-11-27T23:00:00Z'))
+    days = list(closes.iloc[-4:])                             # session closes (UTC) of 23, 24, 25 and 27 November; the 26th is a holiday
+    def bars(values, stamps):
+        return pd.DataFrame({'close': values}, index=pd.DatetimeIndex(stamps))
+    path = tmp_path / 'deep' / 'closes.csv.gz'
+    prices.write_closes(path, {'NA': bars([0.1 + 0.2, 1 / 3, 7.0, 2e-5], days), 'TRUE': bars([5.0, 6.0], days[1:3]),
+                               'BRK.B': bars([500.25], days[-1:])})
+    frame = prices.read_closes(path)
+    assert list(frame.index) == ['2026-11-23', '2026-11-24', '2026-11-25', '2026-11-27'] and list(frame.columns) == ['NA', 'TRUE', 'BRK.B']
+    assert frame['NA'].tolist() == [0.1 + 0.2, 1 / 3, 7.0, 2e-5]                    # the same floats, not rounded text
+    assert frame['TRUE'].isna().tolist() == [True, False, False, True] and frame.loc['2026-11-27', 'BRK.B'] == 500.25
+    assert frame['BRK.B'].isna().sum() == 3 and [p.name for p in path.parent.iterdir()] == ['closes.csv.gz']
