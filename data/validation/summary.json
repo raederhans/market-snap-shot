@@ -1,0 +1,364 @@
+{
+  "schema_version": 1,
+  "validation_version": "1.0.0",
+  "description": "Forward record of the daily market snapshots: each published snapshot is matched with the returns realised a fixed number of sessions later, computed once that day has closed.",
+  "benchmark": "SPY",
+  "confidence_level": 0.95,
+  "min_non_overlapping_periods": 12,
+  "record_start": "2026-11-25",
+  "latest_evaluation_day": "2026-11-25",
+  "latest_evaluated_snapshot_day": null,
+  "snapshot_rules_versions": [],
+  "mean_missing_pct": null,
+  "settings": {
+    "horizons": [
+      5,
+      20,
+      60
+    ],
+    "rs_quintile_edges": [
+      20,
+      40,
+      60,
+      80
+    ],
+    "near_high_within_pct": 10,
+    "combo_min_rs_percentile": 80,
+    "min_group_size": 20,
+    "min_non_overlapping_periods": 12
+  },
+  "last_run": {
+    "5": {
+      "snapshot_day": "2026-11-18",
+      "status": "skipped",
+      "reason": "before_record_start"
+    },
+    "20": {
+      "snapshot_day": "2026-10-28",
+      "status": "skipped",
+      "reason": "before_record_start"
+    },
+    "60": {
+      "snapshot_day": "2026-09-01",
+      "status": "skipped",
+      "reason": "before_record_start"
+    }
+  },
+  "horizons": {
+    "5": {
+      "evaluated_days": 0,
+      "non_overlapping_periods": 0,
+      "sample_status": "insufficient_sample",
+      "first_snapshot_day": null,
+      "last_snapshot_day": null,
+      "snapshot_days_without_evaluation": 0,
+      "mean_missing_pct": null,
+      "non_overlapping_days": [],
+      "metrics": {
+        "rank_ic": {
+          "days": 0,
+          "daily_mean": null,
+          "daily_median": null,
+          "daily_positive_share": null,
+          "non_overlapping": {
+            "periods": 0,
+            "mean": null,
+            "standard_error": null,
+            "ci95_low": null,
+            "ci95_high": null,
+            "t_critical": null
+          },
+          "verdict": "insufficient_sample"
+        },
+        "rs_q5_minus_q1_pct": {
+          "days": 0,
+          "daily_mean": null,
+          "daily_median": null,
+          "daily_positive_share": null,
+          "non_overlapping": {
+            "periods": 0,
+            "mean": null,
+            "standard_error": null,
+            "ci95_low": null,
+            "ci95_high": null,
+            "t_critical": null
+          },
+          "verdict": "insufficient_sample"
+        },
+        "template_pass_minus_fail_pct": {
+          "days": 0,
+          "daily_mean": null,
+          "daily_median": null,
+          "daily_positive_share": null,
+          "non_overlapping": {
+            "periods": 0,
+            "mean": null,
+            "standard_error": null,
+            "ci95_low": null,
+            "ci95_high": null,
+            "t_critical": null
+          },
+          "verdict": "insufficient_sample"
+        },
+        "near_high_minus_rest_pct": {
+          "days": 0,
+          "daily_mean": null,
+          "daily_median": null,
+          "daily_positive_share": null,
+          "non_overlapping": {
+            "periods": 0,
+            "mean": null,
+            "standard_error": null,
+            "ci95_low": null,
+            "ci95_high": null,
+            "t_critical": null
+          },
+          "verdict": "insufficient_sample"
+        },
+        "combo_minus_pool_pct": {
+          "days": 0,
+          "daily_mean": null,
+          "daily_median": null,
+          "daily_positive_share": null,
+          "non_overlapping": {
+            "periods": 0,
+            "mean": null,
+            "standard_error": null,
+            "ci95_low": null,
+            "ci95_high": null,
+            "t_critical": null
+          },
+          "verdict": "insufficient_sample"
+        },
+        "pool_excess_pct": {
+          "days": 0,
+          "daily_mean": null,
+          "daily_median": null,
+          "daily_positive_share": null,
+          "non_overlapping": {
+            "periods": 0,
+            "mean": null,
+            "standard_error": null,
+            "ci95_low": null,
+            "ci95_high": null,
+            "t_critical": null
+          },
+          "verdict": "insufficient_sample"
+        }
+      }
+    },
+    "20": {
+      "evaluated_days": 0,
+      "non_overlapping_periods": 0,
+      "sample_status": "insufficient_sample",
+      "first_snapshot_day": null,
+      "last_snapshot_day": null,
+      "snapshot_days_without_evaluation": 0,
+      "mean_missing_pct": null,
+      "non_overlapping_days": [],
+      "metrics": {
+        "rank_ic": {
+          "days": 0,
+          "daily_mean": null,
+          "daily_median": null,
+          "daily_positive_share": null,
+          "non_overlapping": {
+            "periods": 0,
+            "mean": null,
+            "standard_error": null,
+            "ci95_low": null,
+            "ci95_high": null,
+            "t_critical": null
+          },
+          "verdict": "insufficient_sample"
+        },
+        "rs_q5_minus_q1_pct": {
+          "days": 0,
+          "daily_mean": null,
+          "daily_median": null,
+          "daily_positive_share": null,
+          "non_overlapping": {
+            "periods": 0,
+            "mean": null,
+            "standard_error": null,
+            "ci95_low": null,
+            "ci95_high": null,
+            "t_critical": null
+          },
+          "verdict": "insufficient_sample"
+        },
+        "template_pass_minus_fail_pct": {
+          "days": 0,
+          "daily_mean": null,
+          "daily_median": null,
+          "daily_positive_share": null,
+          "non_overlapping": {
+            "periods": 0,
+            "mean": null,
+            "standard_error": null,
+            "ci95_low": null,
+            "ci95_high": null,
+            "t_critical": null
+          },
+          "verdict": "insufficient_sample"
+        },
+        "near_high_minus_rest_pct": {
+          "days": 0,
+          "daily_mean": null,
+          "daily_median": null,
+          "daily_positive_share": null,
+          "non_overlapping": {
+            "periods": 0,
+            "mean": null,
+            "standard_error": null,
+            "ci95_low": null,
+            "ci95_high": null,
+            "t_critical": null
+          },
+          "verdict": "insufficient_sample"
+        },
+        "combo_minus_pool_pct": {
+          "days": 0,
+          "daily_mean": null,
+          "daily_median": null,
+          "daily_positive_share": null,
+          "non_overlapping": {
+            "periods": 0,
+            "mean": null,
+            "standard_error": null,
+            "ci95_low": null,
+            "ci95_high": null,
+            "t_critical": null
+          },
+          "verdict": "insufficient_sample"
+        },
+        "pool_excess_pct": {
+          "days": 0,
+          "daily_mean": null,
+          "daily_median": null,
+          "daily_positive_share": null,
+          "non_overlapping": {
+            "periods": 0,
+            "mean": null,
+            "standard_error": null,
+            "ci95_low": null,
+            "ci95_high": null,
+            "t_critical": null
+          },
+          "verdict": "insufficient_sample"
+        }
+      }
+    },
+    "60": {
+      "evaluated_days": 0,
+      "non_overlapping_periods": 0,
+      "sample_status": "insufficient_sample",
+      "first_snapshot_day": null,
+      "last_snapshot_day": null,
+      "snapshot_days_without_evaluation": 0,
+      "mean_missing_pct": null,
+      "non_overlapping_days": [],
+      "metrics": {
+        "rank_ic": {
+          "days": 0,
+          "daily_mean": null,
+          "daily_median": null,
+          "daily_positive_share": null,
+          "non_overlapping": {
+            "periods": 0,
+            "mean": null,
+            "standard_error": null,
+            "ci95_low": null,
+            "ci95_high": null,
+            "t_critical": null
+          },
+          "verdict": "insufficient_sample"
+        },
+        "rs_q5_minus_q1_pct": {
+          "days": 0,
+          "daily_mean": null,
+          "daily_median": null,
+          "daily_positive_share": null,
+          "non_overlapping": {
+            "periods": 0,
+            "mean": null,
+            "standard_error": null,
+            "ci95_low": null,
+            "ci95_high": null,
+            "t_critical": null
+          },
+          "verdict": "insufficient_sample"
+        },
+        "template_pass_minus_fail_pct": {
+          "days": 0,
+          "daily_mean": null,
+          "daily_median": null,
+          "daily_positive_share": null,
+          "non_overlapping": {
+            "periods": 0,
+            "mean": null,
+            "standard_error": null,
+            "ci95_low": null,
+            "ci95_high": null,
+            "t_critical": null
+          },
+          "verdict": "insufficient_sample"
+        },
+        "near_high_minus_rest_pct": {
+          "days": 0,
+          "daily_mean": null,
+          "daily_median": null,
+          "daily_positive_share": null,
+          "non_overlapping": {
+            "periods": 0,
+            "mean": null,
+            "standard_error": null,
+            "ci95_low": null,
+            "ci95_high": null,
+            "t_critical": null
+          },
+          "verdict": "insufficient_sample"
+        },
+        "combo_minus_pool_pct": {
+          "days": 0,
+          "daily_mean": null,
+          "daily_median": null,
+          "daily_positive_share": null,
+          "non_overlapping": {
+            "periods": 0,
+            "mean": null,
+            "standard_error": null,
+            "ci95_low": null,
+            "ci95_high": null,
+            "t_critical": null
+          },
+          "verdict": "insufficient_sample"
+        },
+        "pool_excess_pct": {
+          "days": 0,
+          "daily_mean": null,
+          "daily_median": null,
+          "daily_positive_share": null,
+          "non_overlapping": {
+            "periods": 0,
+            "mean": null,
+            "standard_error": null,
+            "ci95_low": null,
+            "ci95_high": null,
+            "t_critical": null
+          },
+          "verdict": "insufficient_sample"
+        }
+      }
+    }
+  },
+  "limitations": [
+    "Overlapping windows: the daily rows of an h-session horizon share h-1 sessions with their neighbours and are not independent. daily_mean, daily_median and daily_positive_share only describe them. The interval and the verdict use rows at least h sessions apart, starting from the first evaluated day.",
+    "Stocks move together within a day, so each day is reduced to one cross-sectional number before any inference: the thousands of stocks in a day are not thousands of independent observations.",
+    "The record covers only the market conditions since record_start. A verdict describes that period and says nothing about other regimes; min_non_overlapping_periods is the floor for computing an interval, not evidence of stability.",
+    "A symbol without an outcome (no usable data on the evaluation day, or no bar on one of the two days) is counted in missing_pct and left out of every average, never filled. Delisted, acquired and renamed companies end up there: a takeover usually removes a gain and a failure removes a loss, so averages can be biased in either direction when missing_pct is not small.",
+    "Returns run from the close of the snapshot day to the close h sessions later, in adjusted prices from Yahoo Finance through yfinance (unofficial) as downloaded on the evaluation day; excess is the simple difference from the benchmark. The snapshot is published after that close, so the entry price was not obtainable, and no cost, slippage or tax is deducted. Averages are equal-weighted; one bad provider value moves them.",
+    "Each horizon reports several metrics, each with its own 95% interval; with this many intervals some exclude zero by chance alone, and every verdict is recomputed as the record grows, which gives chance more opportunities. No multiple-comparison or repeated-look adjustment is made: a verdict that appears and later disappears was noise.",
+    "A descriptive record of features and rankings. Not a trading strategy, not a forecast and not investment advice."
+  ]
+}
