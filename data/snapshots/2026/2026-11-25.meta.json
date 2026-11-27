@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "trading_day": "2026-11-25",
-  "generated_at": "2026-11-27T03:23:08+00:00",
+  "generated_at": "2026-11-27T04:09:45+00:00",
   "provider": "Yahoo Finance via yfinance (unofficial; split- and dividend-adjusted, auto_adjust=True); yfinance 1.8.0",
   "rules_version": "1.0.0",
   "benchmark": {
@@ -31,16 +31,16 @@
     "stocks_requested": 5631,
     "etfs_requested": 13,
     "requested": 5644,
-    "fetched": 5644,
-    "no_data": 0,
+    "fetched": 5643,
+    "no_data": 1,
     "invalid_bars": 4,
-    "snapshot_rows": 5640,
-    "fetch_success_ratio": 0.9993,
+    "snapshot_rows": 5639,
+    "fetch_success_ratio": 0.9991,
     "stale_ratio": 0.0016,
     "rows_by_group_and_status": {
       "stock": {
         "below_min_dollar_volume": 855,
-        "below_min_price": 1703,
+        "below_min_price": 1702,
         "history_gaps": 17,
         "insufficient_bars": 419,
         "ranked": 2624,
@@ -52,7 +52,9 @@
     }
   },
   "failed_symbols": {
-    "no_data": [],
+    "no_data": [
+      "ADGM"
+    ],
     "invalid_bars": {
       "AVZO": "negative volume or non-positive price",
       "GMEX": "negative volume or non-positive price",
@@ -138,6 +140,23 @@
         "sma200"
       ]
     },
+    "validation": {
+      "horizons": [
+        5,
+        20,
+        60
+      ],
+      "rs_quintile_edges": [
+        20,
+        40,
+        60,
+        80
+      ],
+      "near_high_within_pct": 10,
+      "combo_min_rs_percentile": 80,
+      "min_group_size": 20,
+      "min_non_overlapping_periods": 12
+    },
     "publish": {
       "directory": "data",
       "push_attempts": 3
@@ -181,7 +200,7 @@
   "files": {
     "snapshot": "snapshots/2026/2026-11-25.csv.gz",
     "meta": "snapshots/2026/2026-11-25.meta.json",
-    "snapshot_bytes": 227036,
-    "snapshot_sha256": "a9d560950c258cab7136ec811086af940648539abd46d1131756d1f7c71451a9"
+    "snapshot_bytes": 226995,
+    "snapshot_sha256": "3924d0808ce8d8378de635b05ca16aec062eb34cd7c33f7220d3cf00414446ca"
   }
 }
