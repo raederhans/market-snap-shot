@@ -1,0 +1,233 @@
+{
+  "schema_version": 2,
+  "trading_day": "2026-11-27",
+  "generated_at": "2026-11-28T03:16:29+00:00",
+  "provider": "Yahoo Finance via yfinance (unofficial; split- and dividend-adjusted, auto_adjust=True); yfinance 1.8.0",
+  "rules_version": "1.0.0",
+  "benchmark": {
+    "symbol": "SPY",
+    "rs_strength_pct": 0.5258520537009592
+  },
+  "sample_limit": null,
+  "symbol_directory": {
+    "url": "https://www.nasdaqtrader.com/dynamic/SymDir/nasdaqtraded.txt",
+    "file_creation_time": "1127202621:34"
+  },
+  "counts": {
+    "directory_rows": 13309,
+    "directory_excluded": {
+      "debt": 188,
+      "etf": 5832,
+      "fund": 265,
+      "preferred": 139,
+      "right": 122,
+      "structured_product": 6,
+      "symbol_pattern": 378,
+      "test_issue": 36,
+      "unit": 294,
+      "warrant": 421
+    },
+    "stocks_after_filter": 5628,
+    "stocks_requested": 5628,
+    "etfs_requested": 13,
+    "requested": 5641,
+    "fetched": 5641,
+    "no_data": 0,
+    "invalid_bars": 27,
+    "snapshot_rows": 5614,
+    "fetch_success_ratio": 0.9952,
+    "stale_ratio": 0.0005,
+    "rows_by_group_and_status": {
+      "stock": {
+        "below_min_dollar_volume": 848,
+        "below_min_price": 1701,
+        "history_gaps": 18,
+        "insufficient_bars": 412,
+        "ranked": 2619,
+        "stale": 3
+      },
+      "etf": {
+        "reference": 13
+      }
+    }
+  },
+  "failed_symbols": {
+    "no_data": [],
+    "invalid_bars": {
+      "ASA": "OHLC price consistency violated",
+      "AVZO": "negative volume or non-positive price",
+      "BCX": "OHLC price consistency violated",
+      "BMN": "OHLC price consistency violated",
+      "BSRT": "OHLC price consistency violated",
+      "BUI": "OHLC price consistency violated",
+      "CEV": "OHLC price consistency violated",
+      "CIG.C": "OHLC price consistency violated",
+      "CLBR": "OHLC price consistency violated",
+      "DIT": "OHLC price consistency violated",
+      "FMBM": "OHLC price consistency violated",
+      "FTRA": "OHLC price consistency violated",
+      "GDV": "OHLC price consistency violated",
+      "GRX": "OHLC price consistency violated",
+      "HZN": "OHLC price consistency violated",
+      "IGI": "OHLC price consistency violated",
+      "JHI": "OHLC price consistency violated",
+      "JHS": "OHLC price consistency violated",
+      "KWY": "OHLC price consistency violated",
+      "MPV": "OHLC price consistency violated",
+      "NXP": "OHLC price consistency violated",
+      "OIA": "OHLC price consistency violated",
+      "PARA": "negative volume or non-positive price",
+      "PNNT": "OHLC price consistency violated",
+      "RGT": "OHLC price consistency violated",
+      "SVA": "negative volume or non-positive price",
+      "TVE": "OHLC price consistency violated"
+    }
+  },
+  "config": {
+    "benchmark": "SPY",
+    "etf_watchlist": [
+      "SPY",
+      "QQQ",
+      "IWM",
+      "DIA",
+      "RSP",
+      "MDY",
+      "SOXX",
+      "SMH",
+      "XLK",
+      "XLF",
+      "XLE",
+      "XLV",
+      "XLI"
+    ],
+    "universe": {
+      "directory_url": "https://www.nasdaqtrader.com/dynamic/SymDir/nasdaqtraded.txt",
+      "download_attempts": 3,
+      "exclude_symbol_pattern": "\\$",
+      "name_rule": [
+        {
+          "reason": "unit",
+          "pattern": "-\\s*units?\\.?\\s*$|\\bunits?,? each consisting\\b|\\b(corporate|tangible equity) units?\\b"
+        },
+        {
+          "reason": "warrant",
+          "pattern": "\\bwarrants?\\b|\\(ADW\\)"
+        },
+        {
+          "reason": "right",
+          "pattern": "\\brights?\\b",
+          "unless": "representing the right to receive"
+        },
+        {
+          "reason": "preferred",
+          "pattern": "\\bpreferred\\b|\\bpreference\\b|\\bpfd\\b|\\bcapital trust\\b|^(?!.*\\b(american|global)\\b).*\\bdepositary shares?\\b"
+        },
+        {
+          "reason": "debt",
+          "pattern": "\\bnotes?\\b|\\bdebentures?\\b|\\bbonds?\\b|\\bETNs?\\b|%"
+        },
+        {
+          "reason": "structured_product",
+          "pattern": "\\bSTRATS\\b|\\bCorTS\\b|\\bPPlus\\b|corp(orate)? backed|asset-backed|synthetic fixed-income"
+        },
+        {
+          "reason": "fund",
+          "pattern": "\\bfund\\b"
+        }
+      ]
+    },
+    "eligibility": {
+      "min_price": 5.0,
+      "min_avg_dollar_volume_50d": 5000000,
+      "min_bars": 253,
+      "min_ranked_stocks": 100
+    },
+    "prices": {
+      "history_calendar_days": 548,
+      "batch_size": 100,
+      "max_attempts": 3,
+      "backoff_seconds": 20,
+      "pause_seconds": 1.0
+    },
+    "gates": {
+      "min_fetch_success_ratio": 0.95,
+      "max_stale_ratio": 0.05
+    },
+    "output": {
+      "exclude_columns": [
+        "close",
+        "sma50",
+        "sma150",
+        "sma200"
+      ]
+    },
+    "validation": {
+      "horizons": [
+        5,
+        20,
+        60
+      ],
+      "rs_quintile_edges": [
+        20,
+        40,
+        60,
+        80
+      ],
+      "near_high_within_pct": 10,
+      "combo_min_rs_percentile": 80,
+      "min_group_size": 20,
+      "min_non_overlapping_periods": 12
+    },
+    "backfill": {
+      "history_calendar_days": 2192,
+      "step_sessions": 5,
+      "top_dollar_volume": 500,
+      "regime_sma_sessions": 200
+    },
+    "publish": {
+      "directory": "data",
+      "push_attempts": 3
+    }
+  },
+  "columns": [
+    "symbol",
+    "group",
+    "status",
+    "last_bar_date",
+    "bars",
+    "avg_dollar_volume_50d",
+    "atr14_pct",
+    "return_63d_pct",
+    "return_126d_pct",
+    "return_189d_pct",
+    "return_252d_pct",
+    "rs_strength_pct",
+    "rs_vs_benchmark",
+    "momentum_12_1_pct",
+    "rs_percentile",
+    "distance_from_52w_high_pct",
+    "distance_from_52w_low_pct",
+    "trend_template_status",
+    "trend_template_passed",
+    "tt_above_150_and_200",
+    "tt_150_above_200",
+    "tt_200_rising_21_sessions",
+    "tt_50_above_150_and_200",
+    "tt_above_50",
+    "tt_at_least_30pct_above_low",
+    "tt_within_25pct_of_high",
+    "tt_rs_percentile_at_least_70"
+  ],
+  "excluded_columns": [
+    "close",
+    "sma50",
+    "sma150",
+    "sma200"
+  ],
+  "files": {
+    "snapshot": "snapshots/2026/2026-11-27.csv.gz",
+    "meta": "snapshots/2026/2026-11-27.meta.json",
+    "snapshot_bytes": 226555,
+    "snapshot_sha256": "7be871a3b5ec8b7670f6fcfe72e113a29c8129c935536d4ac9382383ae5a5bc2"
+  }
+}
