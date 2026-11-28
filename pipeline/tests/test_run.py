@@ -60,7 +60,7 @@ def test_successful_run_writes_snapshot_metadata_and_pointer(tmp_path, config, p
     assert call['settings'] == {'batch_size': 100, 'max_attempts': 3, 'backoff_seconds': 20, 'pause_seconds': 1.0}
     assert 'BRK.B' in call['symbols'] and 'SPY' in call['symbols'] and 'AACIW' not in call['symbols']
 
-    files = sorted(str(p.relative_to(tmp_path)) for p in tmp_path.rglob('*') if p.is_file())
+    files = sorted(p.relative_to(tmp_path).as_posix() for p in tmp_path.rglob('*') if p.is_file())
     assert files == ['latest.json', f'snapshots/2026/{DAY}.csv.gz', f'snapshots/2026/{DAY}.meta.json']
     table = read_snapshot(tmp_path)
     published = [c for c in universe_rank.COLUMNS if c not in PRICE_LEVELS]
