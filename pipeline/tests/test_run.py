@@ -163,6 +163,9 @@ def test_every_gate_failure_publishes_nothing(tmp_path, config, provider, fetch,
 
 def test_cli_exit_codes(tmp_path, config, provider, monkeypatch, capsys):
     monkeypatch.setattr(pipeline_run, 'load_config', lambda: config)
+    # main() takes no clock argument; pin run() to NOW so the expected day does not depend on when the test runs.
+    real_run = pipeline_run.run
+    monkeypatch.setattr(pipeline_run, 'run', lambda *args, **kwargs: real_run(*args, now=NOW, **kwargs))
     assert pipeline_run.main(['--out', str(tmp_path / 'ok'), '--closes', str(tmp_path / 'closes.csv.gz')]) == 0
     assert (tmp_path / 'ok' / 'latest.json').is_file() and 'rows' in capsys.readouterr().out
     assert prices.read_closes(tmp_path / 'closes.csv.gz').index[-1] == DAY
