@@ -65,7 +65,7 @@ def world(tmp_path, config):
 
 
 def files_in(directory):
-    return {str(p.relative_to(directory)): p.read_bytes() for p in sorted(directory.rglob('*')) if p.is_file()}
+    return {p.relative_to(directory).as_posix(): p.read_bytes() for p in sorted(directory.rglob('*')) if p.is_file()}
 
 
 def daily_rows(directory):

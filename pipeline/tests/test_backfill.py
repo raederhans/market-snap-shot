@@ -40,7 +40,7 @@ def test_run_writes_the_daily_table_and_the_summary_and_nothing_else(tmp_path, c
     call = provider['calls'][0]
     assert (call['start'], call['end']) == ('2024-11-25', '2026-11-26') and len(call['symbols']) == STOCKS + 1
     assert call['symbols'][-1] == 'SPY' and 'QQQ' not in call['symbols'] and call['settings']['batch_size'] == 100
-    assert sorted(str(p.relative_to(tmp_path)) for p in tmp_path.rglob('*') if p.is_file()) == ['backfill/daily.csv', 'backfill/summary.json']
+    assert sorted(p.relative_to(tmp_path).as_posix() for p in tmp_path.rglob('*') if p.is_file()) == ['backfill/daily.csv', 'backfill/summary.json']
     assert json.loads((tmp_path / 'backfill/summary.json').read_text()) == document
 
     rows = table(tmp_path)
